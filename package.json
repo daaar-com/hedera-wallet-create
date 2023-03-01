@@ -1,0 +1,24 @@
+{
+  "name": "hedera-wallet-create",
+  "version": "1.0.0",
+  "description": "lambda function to create hedera wallets and private keys",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daaar-com/hedera-wallet-create.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daaar-com/hedera-wallet-create/issues"
+  },
+  "homepage": "https://github.com/daaar-com/hedera-wallet-create#readme",
+  "dependencies": {
+    "@hashgraph/sdk": "^2.22.0",
+    "dotenv": "^16.0.3"
+  }
+}
