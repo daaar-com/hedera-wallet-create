@@ -1,6 +1,5 @@
 import {
-    Wallet,
-    LocalProvider,
+    Client,
     PrivateKey,
     AccountCreateTransaction,
     Hbar,
@@ -17,29 +16,26 @@ async function main() {
         );
     }
 
-    const wallet = new Wallet(
-        process.env.HEDERA_ACCOUNT_ID,
-        process.env.HEDERA_PRIVATE_KEY,
-        new LocalProvider()
-    );
+    const client = Client.forTestnet();
+
+    client.setOperator(process.env.HEDERA_ACCOUNT_ID, process.env.HEDERA_PRIVATE_KEY);
 
     const newKey = PrivateKey.generate();
 
-    let transaction = await new AccountCreateTransaction()
+    const transaction = new AccountCreateTransaction()
         .setInitialBalance(new Hbar(0)) // 10 h
-        .setKey(newKey.publicKey)
-        .freezeWithSigner(wallet);
+        .setKey(newKey.publicKey);
 
+    const txResponse = await transaction.execute(client);
 
-    console.log(`private key = ${newKey.toString()}`);
-    console.log(`public key = ${newKey.publicKey.toString()}`);
+    const receipt = await txResponse.getReceipt(client);
 
-    console.log(`account id = ${newKey.publicKey.toAccountId(0,0).toString()}`);
+    const newAccountId = receipt.accountId;
 
     return {
         "private_kwy": newKey.toString(),
         "public_key": newKey.publicKey.toString(),
-        "account_id": newKey.publicKey.toAccountId(0,0).toString()
+        "account_id": newAccountId.toString()
     }
 }
 
