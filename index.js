@@ -35,7 +35,7 @@ async function main() {
     // associate token
     transaction = await new TokenAssociateTransaction()
         .setAccountId(newAccountId)
-        .setTokenIds(['0.0.3688640'])
+        .setTokenIds(['0.0.3688640', '0.0.3657248'])
         .freezeWith(client);
 
 //Sign with the private key of the account that is being associated to a token
