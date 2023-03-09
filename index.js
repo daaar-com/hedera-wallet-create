@@ -3,6 +3,7 @@ import {
     PrivateKey,
     AccountCreateTransaction,
     Hbar,
+    TokenAssociateTransaction
 } from "@hashgraph/sdk";
 
 import dotenv from "dotenv";
@@ -22,18 +23,37 @@ async function main() {
 
     const newKey = PrivateKey.generate();
 
-    const transaction = new AccountCreateTransaction()
+    let transaction = new AccountCreateTransaction()
         .setInitialBalance(new Hbar(0)) // 10 h
         .setKey(newKey.publicKey);
 
-    const txResponse = await transaction.execute(client);
+    let txResponse = await transaction.execute(client);
 
-    const receipt = await txResponse.getReceipt(client);
+    let receipt = await txResponse.getReceipt(client);
 
     const newAccountId = receipt.accountId;
+    // associate token
+    transaction = await new TokenAssociateTransaction()
+        .setAccountId(newAccountId)
+        .setTokenIds(['0.0.3688640'])
+        .freezeWith(client);
+
+//Sign with the private key of the account that is being associated to a token
+    let signTx = await transaction.sign(newKey);
+
+//Submit the transaction to a Hedera network
+    txResponse = await signTx.execute(client);
+
+//Request the receipt of the transaction
+    receipt = await txResponse.getReceipt(client);
+
+//Get the transaction consensus status
+    let transactionStatus = receipt.status;
+
+    console.log("The transaction consensus status " + transactionStatus.toString());
 
     return {
-        "private_kwy": newKey.toString(),
+        "private_key": newKey.toString(),
         "public_key": newKey.publicKey.toString(),
         "account_id": newAccountId.toString()
     }
